@@ -1,0 +1,237 @@
+{
+  "name": "esp32_ina226",
+  "components": [
+    {
+      "id": "U1",
+      "library_id": "MCU_Espressif:ESP32-WROOM-32",
+      "reference": null,
+      "value": "ESP32-WROOM-32",
+      "label": "ESP32",
+      "pins": [
+        {
+          "number": "1",
+          "name": "3V3",
+          "electrical_type": "power_in",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "21",
+          "name": "GPIO21",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "22",
+          "name": "GPIO22",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "38",
+          "name": "GND",
+          "electrical_type": "power_in",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {},
+      "placement_hint": null
+    },
+    {
+      "id": "U2",
+      "library_id": "Sensor_Current:INA226",
+      "reference": null,
+      "value": "INA226",
+      "label": "INA226",
+      "pins": [
+        {
+          "number": "1",
+          "name": "SDA",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "SCL",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "3",
+          "name": "VS",
+          "electrical_type": "power_in",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "electrical_type": "power_in",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {},
+      "placement_hint": null
+    },
+    {
+      "id": "R1",
+      "library_id": "Device:R",
+      "reference": null,
+      "value": "4.7k",
+      "label": null,
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {},
+      "placement_hint": null
+    },
+    {
+      "id": "R2",
+      "library_id": "Device:R",
+      "reference": null,
+      "value": "4.7k",
+      "label": null,
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {},
+      "placement_hint": null
+    },
+    {
+      "id": "C1",
+      "library_id": "Device:C",
+      "reference": null,
+      "value": "0.1uF",
+      "label": null,
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {},
+      "placement_hint": null
+    },
+    {
+      "id": "J1",
+      "library_id": "Connector_Generic:Conn_01x02",
+      "reference": null,
+      "value": null,
+      "label": "POWER",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VCC",
+          "electrical_type": "power_in",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "electrical_type": "power_in",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {},
+      "placement_hint": null
+    }
+  ],
+  "nets": [
+    {
+      "name": "+3V3",
+      "nodes": [
+        "U1.1",
+        "U2.3",
+        "R1.1",
+        "R2.1",
+        "C1.1",
+        "J1.1"
+      ]
+    },
+    {
+      "name": "GND",
+      "nodes": [
+        "U1.38",
+        "U2.4",
+        "C1.2",
+        "J1.2"
+      ]
+    },
+    {
+      "name": "SDA",
+      "nodes": [
+        "U1.21",
+        "U2.1",
+        "R1.2"
+      ]
+    },
+    {
+      "name": "SCL",
+      "nodes": [
+        "U1.22",
+        "U2.2",
+        "R2.2"
+      ]
+    }
+  ]
+}
