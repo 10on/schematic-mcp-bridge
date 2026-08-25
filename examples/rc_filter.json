@@ -1,0 +1,72 @@
+{
+  "name": "rc_filter",
+  "components": [
+    {
+      "id": "R1",
+      "library_id": "Device:R",
+      "reference": "R1",
+      "value": "1k",
+      "label": null,
+      "pins": [
+        {
+          "number": "1",
+          "name": "~",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "~",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {
+        "description": "Resistor"
+      },
+      "placement_hint": null
+    },
+    {
+      "id": "C1",
+      "library_id": "Device:C",
+      "reference": "C1",
+      "value": "0.1uF",
+      "label": null,
+      "pins": [
+        {
+          "number": "1",
+          "name": "~",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        },
+        {
+          "number": "2",
+          "name": "~",
+          "electrical_type": "passive",
+          "side": null,
+          "orientation": null,
+          "hidden": false
+        }
+      ],
+      "metadata": {
+        "description": "Unpolarized capacitor"
+      },
+      "placement_hint": null
+    }
+  ],
+  "nets": [
+    {
+      "name": "N$1",
+      "nodes": [
+        "R1.2",
+        "C1.1"
+      ]
+    }
+  ]
+}

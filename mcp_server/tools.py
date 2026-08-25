@@ -14,6 +14,7 @@ from __future__ import annotations
 
 from dataclasses import asdict
 
+from schematic.exporters.kicad import export_kicad as export_kicad_fn
 from schematic.layout import SchematicLayout, auto_layout as auto_layout_fn
 from schematic.library import DEFAULT_LIB_DIRS, ComponentLibrary
 from schematic.model import ComponentNotFoundError, Schematic
@@ -179,5 +180,6 @@ class SchematicSession:
     def get_preview(self) -> dict:
         return self.render_svg()
 
-    def export_kicad(self) -> dict:
-        raise NotImplementedError("KiCad export is not implemented yet (stage 6)")
+    def export_kicad(self, path: str) -> dict:
+        export_kicad_fn(self._require_schematic(), path, lib_search_paths=self.library.search_paths)
+        return {"exported": path}

@@ -34,9 +34,7 @@ See `schematic_mcp_requirements.md` for the full spec and `SKILL.md`
   The stateful logic lives in `mcp_server/tools.py::SchematicSession`
   (one active schematic per session), framework-free so it's tested
   directly without an MCP client. `set_placement_hint` / `set_pin_side`
-  / `group_components` store intent on the model already — `auto_layout`
-  doesn't consume it yet, that's stage 5. `export_kicad` raises
-  `NotImplementedError` (stage 6).
+  / `group_components` store intent on the model already.
 - Stage 5 done: `auto_layout` now honors `left_of`/`right_of` placement
   hints (topological reorder of the row; other relations are still
   ignored, a real 2D layout is stage 7 territory if needed). New
@@ -46,9 +44,31 @@ See `schematic_mcp_requirements.md` for the full spec and `SKILL.md`
   label, since routing around an intervening box is real
   routing-algorithm work (deferred). `set_pin_side`/`group_components`
   are still stored-but-unconsumed.
+- Stage 6 done: `.kicad_sch` export (`schematic/exporters/kicad.py`),
+  reusing SKiDL's own schematic generator rather than hand-rolling a
+  KiCad file writer — it already draws real classical symbols with
+  correct geometry (section 4/19's stated preference). Only works for
+  components sourced from a real library symbol via `add_component`;
+  raises `KicadExportError` on a hand-authored/invented component or one
+  that doesn't resolve, rather than silently producing a broken file.
+  `examples/esp32_ina226.json` can't export (its ESP32/INA226 pins are
+  hand-authored placeholders, not real symbols) — see
+  `examples/build_rc_filter.py` for a small schematic built entirely
+  from real library parts that does. Needed vendoring `power.kicad_sym`
+  too (SKiDL's schematic generator loads it unconditionally).
 
-Next: Stage 6 — `.kicad_sch` export (optional backend, MVP doesn't
-depend on it).
+  Also fixed a real bug found while building that RC filter example:
+  `ComponentLibrary.instantiate()` defaulted `reference` to the bare
+  library ref_prefix ('R' for *every* resistor) instead of
+  `component_id` — so adding a second resistor without an explicit
+  `reference=` produced a false `duplicate_reference` ERC error on a
+  perfectly valid schematic.
+
+MVP is now complete end-to-end (search → add → connect → validate/ERC →
+SVG / KiCad export) via both the CLI and the MCP server. What's left is
+optional polish: stage 7 (ELK-based 2D layout + general wire routing) is
+explicitly "only if this isn't good enough" territory in the spec, not
+committed to.
 
 ## Development
 
@@ -60,6 +80,7 @@ PYTHONPATH=. python3 -m pytest
 PYTHONPATH=. python3 -m cli.main search resistor
 PYTHONPATH=. python3 -m cli.main validate examples/esp32_ina226.json
 PYTHONPATH=. python3 -m cli.main render examples/esp32_ina226.json -o out.svg
+PYTHONPATH=. python3 -m cli.main export-kicad examples/rc_filter.json -o out.kicad_sch
 
 # MCP server (stdio)
 PYTHONPATH=. python3 -m mcp_server.server

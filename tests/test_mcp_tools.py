@@ -86,7 +86,15 @@ def test_save_and_load_roundtrip(session, tmp_path):
     assert info["components"] == 1
 
 
-def test_export_kicad_not_implemented(session):
+def test_export_kicad_writes_file(session, tmp_path):
     session.create_schematic("demo")
-    with pytest.raises(NotImplementedError):
-        session.export_kicad()
+    session.add_component("Device:R", "R1", value="4.7k")
+    session.add_component("Device:C", "C1", value="0.1uF")
+    session.connect("R1.1", "C1.1")
+
+    out_path = tmp_path / "demo.kicad_sch"
+    result = session.export_kicad(str(out_path))
+
+    assert result == {"exported": str(out_path)}
+    assert out_path.exists()
+    assert out_path.read_text().startswith("(kicad_sch")

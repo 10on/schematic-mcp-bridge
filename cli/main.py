@@ -1,8 +1,5 @@
-"""CLI for the schematic model — search parts, validate, render SVG.
-
-See requirements section 20. `export-kicad` isn't implemented yet
-(stage 6).
-"""
+"""CLI for the schematic model — search parts, validate, render SVG,
+export to KiCad. See requirements section 20."""
 
 from __future__ import annotations
 
@@ -10,6 +7,7 @@ import argparse
 import sys
 from pathlib import Path
 
+from schematic.exporters.kicad import KicadExportError, export_kicad
 from schematic.layout import auto_layout
 from schematic.library import DEFAULT_LIB_DIRS, ComponentLibrary
 from schematic.model import Schematic
@@ -48,6 +46,17 @@ def cmd_render(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_export_kicad(args: argparse.Namespace) -> int:
+    schematic = Schematic.load(args.project)
+    try:
+        export_kicad(schematic, args.output, lib_search_paths=args.lib_dir or DEFAULT_LIB_DIRS)
+    except KicadExportError as exc:
+        print(f"error: {exc}")
+        return 1
+    print(f"wrote {args.output}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="schematic")
     subparsers = parser.add_subparsers(dest="command", required=True)
@@ -65,6 +74,12 @@ def build_parser() -> argparse.ArgumentParser:
     render_parser.add_argument("project", help="path to schematic JSON")
     render_parser.add_argument("-o", "--output", required=True, help="output SVG path")
     render_parser.set_defaults(func=cmd_render)
+
+    export_parser = subparsers.add_parser("export-kicad", help="export a schematic to .kicad_sch")
+    export_parser.add_argument("project", help="path to schematic JSON")
+    export_parser.add_argument("-o", "--output", required=True, help="output .kicad_sch path")
+    export_parser.add_argument("--lib-dir", action="append", help="directory of .kicad_sym files")
+    export_parser.set_defaults(func=cmd_export_kicad)
 
     return parser
 

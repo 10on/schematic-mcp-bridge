@@ -43,6 +43,7 @@ TOOLS = [
     session.run_erc,
     session.render_svg,
     session.get_preview,
+    session.export_kicad,
 ]
 
 for _tool in TOOLS:

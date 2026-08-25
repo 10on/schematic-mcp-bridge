@@ -149,12 +149,19 @@ class ComponentLibrary:
         reference: str | None = None,
         label: str | None = None,
     ) -> Component:
-        """Build a standalone `Component` from a library symbol (not yet added to a schematic)."""
+        """Build a standalone `Component` from a library symbol (not yet added to a schematic).
+
+        `reference` defaults to `component_id`, not the library's bare
+        ref_prefix ('R', 'C', ...) — the prefix alone isn't a unique
+        reference designator, so leaving it as the default silently
+        produces duplicate_reference errors as soon as a second part
+        from the same library symbol gets added.
+        """
         part = self._find_skidl_part(library_id)
         return Component(
             id=component_id,
             library_id=library_id,
-            reference=reference or part.ref_prefix,
+            reference=reference or component_id,
             value=value if value is not None else (part.value or None),
             label=label,
             pins=self.get_component_pins(library_id),
