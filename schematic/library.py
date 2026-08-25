@@ -14,6 +14,9 @@ import skidl
 
 from schematic.model import Component, Pin
 
+REPO_ROOT = Path(__file__).resolve().parent.parent
+DEFAULT_LIB_DIRS = [REPO_ROOT / "tests" / "fixtures" / "kicad-symbols"]
+
 PIN_FUNC_TO_ELECTRICAL_TYPE = {
     1: "input",
     2: "output",
@@ -82,10 +85,13 @@ class ComponentLibrary:
         return self._schlib_cache[lib_name]
 
     def _find_skidl_part(self, library_id: str) -> skidl.Part:
+        """Returns a fully-parsed part — fields like ref_prefix/value are
+        wrong defaults (e.g. ref_prefix is always 'U') until parse() runs."""
         lib_name, symbol_name = _split_library_id(library_id)
         schlib = self._load_schlib(lib_name)
         for part in schlib.parts:
             if part.name == symbol_name:
+                part.parse()
                 return part
         raise ComponentNotInLibraryError(f"'{symbol_name}' not found in library '{lib_name}'")
 
@@ -100,6 +106,10 @@ class ComponentLibrary:
                     filter(None, [part.name, part.description, part.keywords])
                 ).lower()
                 if needle in haystack:
+                    # name/description/keywords are already correct pre-parse,
+                    # but ref_prefix is a placeholder ('U') until parsed —
+                    # only pay for parsing once we know it's a match.
+                    part.parse()
                     results.append(
                         ComponentSearchResult(
                             library_id=f"{lib_name}:{part.name}",
@@ -110,9 +120,18 @@ class ComponentLibrary:
                     )
         return results
 
+    def get_component(self, library_id: str) -> dict:
+        part = self._find_skidl_part(library_id)
+        pins = self.get_component_pins(library_id)
+        return {
+            "library_id": library_id,
+            "description": _fix_mojibake(part.description or ""),
+            "ref_prefix": part.ref_prefix,
+            "pins": [pin.to_dict() for pin in pins],
+        }
+
     def get_component_pins(self, library_id: str) -> list[Pin]:
         part = self._find_skidl_part(library_id)
-        part.parse()
         return [
             Pin(
                 number=str(pin.num),

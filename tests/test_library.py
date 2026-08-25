@@ -53,6 +53,17 @@ def test_instantiate_builds_component(library):
     assert len(component.pins) == 2
 
 
+def test_instantiate_ref_prefix_correct_without_prior_parse():
+    # Regression test for a bug where ref_prefix read SKiDL's un-parsed
+    # placeholder ('U' for every part) instead of the real prefix — only
+    # visible on a part no earlier test has touched, since SKiDL caches
+    # parsed parts globally and earlier tests would mask it. Device:LED
+    # is not used by any other test in this file.
+    library = ComponentLibrary(search_paths=[FIXTURES])
+    component = library.instantiate("Device:LED", component_id="D1")
+    assert component.reference == "D"
+
+
 def test_instantiate_esp32s3_has_many_pins(library):
     component = library.instantiate("MCU_Espressif:ESP32-S3", component_id="U1")
     assert len(component.pins) > 10

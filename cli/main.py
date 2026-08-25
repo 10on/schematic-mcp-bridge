@@ -11,13 +11,10 @@ import sys
 from pathlib import Path
 
 from schematic.layout import auto_layout
-from schematic.library import ComponentLibrary
+from schematic.library import DEFAULT_LIB_DIRS, ComponentLibrary
 from schematic.model import Schematic
 from schematic.renderer import render_svg
 from schematic.validation import run_erc
-
-REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_LIB_DIRS = [REPO_ROOT / "tests" / "fixtures" / "kicad-symbols"]
 
 
 def cmd_search(args: argparse.Namespace) -> int:

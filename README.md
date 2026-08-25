@@ -28,8 +28,17 @@ See `schematic_mcp_requirements.md` for the full spec and `SKILL.md`
   to each pin — no drawn wires yet, connectivity is shown via labels
   (see requirements section 11); and a CLI (`cli/main.py`: `search`,
   `validate`, `render`).
+- Stage 4 done: MCP server (`mcp_server/server.py`) exposing the full
+  section 8 tool list — library lookup, schematic lifecycle,
+  connections, layout hints, validation/ERC, SVG output — over stdio.
+  The stateful logic lives in `mcp_server/tools.py::SchematicSession`
+  (one active schematic per session), framework-free so it's tested
+  directly without an MCP client. `set_placement_hint` / `set_pin_side`
+  / `group_components` store intent on the model already — `auto_layout`
+  doesn't consume it yet, that's stage 5. `export_kicad` raises
+  `NotImplementedError` (stage 6).
 
-Next: Stage 4 — MCP server exposing this as tools for an agent.
+Next: Stage 5 — real placement heuristics + wire routing.
 
 ## Development
 
@@ -41,4 +50,7 @@ PYTHONPATH=. python3 -m pytest
 PYTHONPATH=. python3 -m cli.main search resistor
 PYTHONPATH=. python3 -m cli.main validate examples/esp32_ina226.json
 PYTHONPATH=. python3 -m cli.main render examples/esp32_ina226.json -o out.svg
+
+# MCP server (stdio)
+PYTHONPATH=. python3 -m mcp_server.server
 ```
