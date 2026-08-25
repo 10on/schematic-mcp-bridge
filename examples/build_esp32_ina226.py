@@ -7,6 +7,7 @@ KiCad symbol library lookups via schematic/library.py). Run:
 """
 
 from schematic.model import Component, Pin, Schematic
+from schematic.validation import run_erc
 
 
 def build() -> Schematic:
@@ -67,8 +68,8 @@ def build() -> Schematic:
             library_id="Connector_Generic:Conn_01x02",
             label="POWER",
             pins=[
-                Pin(number="1", name="VCC", electrical_type="power_in"),
-                Pin(number="2", name="GND", electrical_type="power_in"),
+                Pin(number="1", name="VCC", electrical_type="power_out"),
+                Pin(number="2", name="GND", electrical_type="power_out"),
             ],
         )
     )
@@ -87,3 +88,10 @@ if __name__ == "__main__":
     schematic = build()
     schematic.save("esp32_ina226.json")
     print(f"wrote esp32_ina226.json: {len(schematic.components)} components, {len(schematic.nets)} nets")
+
+    erc = run_erc(schematic)
+    print(f"ERC: {len(erc['errors'])} errors, {len(erc['warnings'])} warnings")
+    for warning in erc["warnings"]:
+        print(f"  warning: {warning}")
+    for error in erc["errors"]:
+        print(f"  error: {error}")
