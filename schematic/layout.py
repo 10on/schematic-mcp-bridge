@@ -1,10 +1,11 @@
-"""Naive automatic layout: one row of component boxes, left to right.
+"""Automatic layout: one row of component boxes, left to right.
 
-This is deliberately simple — real placement heuristics (signal flow
-left-to-right, power rails on top, grouping related parts, ELK-based
-placement) are requirements section 10 / stage 5, not this stage. This
-module only has to produce *some* non-overlapping, deterministic
-geometry so the renderer has coordinates to draw.
+Row order honors `left_of`/`right_of` placement hints (requirements
+section 10) via a topological sort; other relations (`above`, `below`,
+`near`, `same_row`, `same_column`) don't mean anything in a single-row
+layout and are ignored — a real 2D layout is stage 7 territory if this
+turns out not to be good enough. Grouping (`group_components`) is
+still stored-but-unused intent; see mcp_server/tools.py.
 
 The horizontal gap between boxes is sized dynamically from the pin/net
 label text each box will draw outward (renderer.py) — a fixed gap
@@ -15,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from schematic.model import Pin, Schematic
+from schematic.model import Component, Pin, Schematic
 
 PIN_SPACING = 24
 BOX_PADDING_Y = 20
@@ -65,6 +66,45 @@ def _side_reach(pins: list[Pin], component_id: str, node_to_net: dict[str, str])
     return STUB_LENGTH + widest + SIDE_MARGIN
 
 
+def _ordered_components(schematic: Schematic) -> list[Component]:
+    """Insertion order, adjusted for left_of/right_of placement hints via a
+    stable topological sort. A hint referencing an unknown component, or
+    that would create a cycle, is silently ignored (best-effort, never
+    raises — a bad hint shouldn't block rendering)."""
+    components = list(schematic.components.values())
+    order_index = {c.id: i for i, c in enumerate(components)}
+    must_precede: dict[str, set[str]] = {c.id: set() for c in components}
+
+    for component in components:
+        hint = component.placement_hint
+        if not hint or hint.get("target") not in order_index:
+            continue
+        relation, target = hint.get("relation"), hint["target"]
+        if relation == "left_of":
+            must_precede[target].add(component.id)
+        elif relation == "right_of":
+            must_precede[component.id].add(target)
+
+    ordered_ids: list[str] = []
+    done: set[str] = set()
+    in_progress: set[str] = set()
+
+    def visit(component_id: str) -> None:
+        if component_id in done or component_id in in_progress:
+            return
+        in_progress.add(component_id)
+        for dep_id in sorted(must_precede[component_id], key=lambda cid: order_index[cid]):
+            visit(dep_id)
+        in_progress.discard(component_id)
+        done.add(component_id)
+        ordered_ids.append(component_id)
+
+    for component in components:
+        visit(component.id)
+
+    return [schematic.components[cid] for cid in ordered_ids]
+
+
 def auto_layout(schematic: Schematic) -> SchematicLayout:
     node_to_net = schematic.node_to_net_map()
     boxes: dict[str, ComponentBox] = {}
@@ -72,7 +112,7 @@ def auto_layout(schematic: Schematic) -> SchematicLayout:
     max_bottom = 0.0
     prev_right_reach = 0.0
 
-    for component in schematic.components.values():
+    for component in _ordered_components(schematic):
         visible_pins = [p for p in component.pins if not p.hidden]
         split = (len(visible_pins) + 1) // 2
         left_pins, right_pins = visible_pins[:split], visible_pins[split:]

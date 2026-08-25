@@ -127,10 +127,9 @@ class SchematicSession:
         return {"renamed_to": new_name}
 
     # -- layout -------------------------------------------------------------
-    # set_placement_hint/set_pin_side/group_components store intent on the
-    # model. auto_layout() (stage 3, naive row placement) is the only thing
-    # that currently consumes any of it, and it doesn't yet — real placement
-    # heuristics are stage 5.
+    # auto_layout() honors left_of/right_of placement hints (row reordering,
+    # stage 5). Other relations, set_pin_side, and group_components still
+    # only store intent on the model — nothing consumes them yet.
 
     def set_placement_hint(self, component_id: str, relation: str, target: str) -> dict:
         schematic = self._require_schematic()

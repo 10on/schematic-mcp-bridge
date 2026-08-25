@@ -37,8 +37,18 @@ See `schematic_mcp_requirements.md` for the full spec and `SKILL.md`
   / `group_components` store intent on the model already — `auto_layout`
   doesn't consume it yet, that's stage 5. `export_kicad` raises
   `NotImplementedError` (stage 6).
+- Stage 5 done: `auto_layout` now honors `left_of`/`right_of` placement
+  hints (topological reorder of the row; other relations are still
+  ignored, a real 2D layout is stage 7 territory if needed). New
+  `schematic/routing.py` draws an actual orthogonal wire between two
+  components when they land as immediate neighbors *and* it's a
+  2-endpoint net with pins facing each other — otherwise still a net
+  label, since routing around an intervening box is real
+  routing-algorithm work (deferred). `set_pin_side`/`group_components`
+  are still stored-but-unconsumed.
 
-Next: Stage 5 — real placement heuristics + wire routing.
+Next: Stage 6 — `.kicad_sch` export (optional backend, MVP doesn't
+depend on it).
 
 ## Development
 

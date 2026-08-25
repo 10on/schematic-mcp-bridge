@@ -1,26 +1,28 @@
 """SVG renderer: semantic model + layout -> SVG text.
 
-Connectivity is shown with net labels next to each pin, not drawn
-wires — see requirements section 11 (net labels are an explicitly
-valid substitute for long/messy physical wires) and section 17 (the
-renderer must not determine electrical connectivity, only draw what
-the model and layout already decided). Real wire routing between
-nearby pins is stage 5, on top of this.
+Connectivity is shown two ways: a real wire when routing.py found a
+safe direct route between neighboring components, otherwise a net
+label next to the pin — see requirements section 11 (labels are an
+explicitly valid substitute for long/messy physical wires) and section
+17 (the renderer must not determine electrical connectivity, only draw
+what the model, layout, and routing already decided).
 """
 
 from __future__ import annotations
 
 from html import escape
 
-from schematic.layout import SchematicLayout
+from schematic.layout import STUB_LENGTH, SchematicLayout
 from schematic.model import Schematic
+from schematic.routing import route_wires
 
-STUB_LENGTH = 16
 FONT_FAMILY = "monospace"
 
 
 def render_svg(schematic: Schematic, layout: SchematicLayout) -> str:
     node_to_net = schematic.node_to_net_map()
+    wires = route_wires(schematic, layout)
+    routed_nodes = {node for wire in wires for node in (wire.node_a, wire.node_b)}
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'viewBox="0 0 {layout.width:.0f} {layout.height:.0f}" '
@@ -80,13 +82,18 @@ def render_svg(schematic: Schematic, layout: SchematicLayout) -> str:
                 f'font-size="11">{escape(pin.name)}</text>'
             )
 
-            net_name = node_to_net.get(f"{component.id}.{pin.number}")
-            if net_name:
+            node = f"{component.id}.{pin.number}"
+            net_name = node_to_net.get(node)
+            if net_name and node not in routed_nodes:
                 parts.append(
                     f'<text x="{label_x:.0f}" y="{pin_pos.y + label_y_offset:.0f}" '
                     f'text-anchor="{label_anchor}" font-size="9" fill="#2a6" '
                     f'font-style="italic">{escape(net_name)}</text>'
                 )
+
+    for wire in wires:
+        path = " ".join(f"{x:.0f},{y:.0f}" for x, y in wire.points)
+        parts.append(f'<polyline points="{path}" fill="none" stroke="black" stroke-width="1"/>')
 
     parts.append("</svg>")
     return "\n".join(parts)

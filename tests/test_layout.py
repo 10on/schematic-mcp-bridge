@@ -59,3 +59,61 @@ def test_layout_bounds_cover_all_boxes():
     for box in layout.boxes.values():
         assert box.x + box.width <= layout.width
         assert box.y + box.height <= layout.height
+
+
+def test_left_of_hint_reorders_placement():
+    schematic = Schematic(name="demo")
+    schematic.add_component(Component(id="A", library_id="Device:R", pins=[]))
+    schematic.add_component(Component(id="B", library_id="Device:R", pins=[]))
+    # inserted after B, but hinted to sit to B's left
+    schematic.add_component(
+        Component(
+            id="C", library_id="Device:R", pins=[], placement_hint={"relation": "left_of", "target": "B"}
+        )
+    )
+
+    layout = auto_layout(schematic)
+    assert layout.boxes["C"].x < layout.boxes["B"].x
+
+
+def test_right_of_hint_reorders_placement():
+    schematic = Schematic(name="demo")
+    schematic.add_component(
+        Component(
+            id="A", library_id="Device:R", pins=[], placement_hint={"relation": "right_of", "target": "B"}
+        )
+    )
+    schematic.add_component(Component(id="B", library_id="Device:R", pins=[]))
+
+    layout = auto_layout(schematic)
+    assert layout.boxes["A"].x > layout.boxes["B"].x
+
+
+def test_hint_referencing_unknown_component_is_ignored():
+    schematic = Schematic(name="demo")
+    schematic.add_component(
+        Component(
+            id="A",
+            library_id="Device:R",
+            pins=[],
+            placement_hint={"relation": "left_of", "target": "does-not-exist"},
+        )
+    )
+    layout = auto_layout(schematic)
+    assert "A" in layout.boxes  # doesn't raise, just ignores the bad hint
+
+
+def test_conflicting_hints_do_not_raise():
+    schematic = Schematic(name="demo")
+    schematic.add_component(
+        Component(
+            id="A", library_id="Device:R", pins=[], placement_hint={"relation": "left_of", "target": "B"}
+        )
+    )
+    schematic.add_component(
+        Component(
+            id="B", library_id="Device:R", pins=[], placement_hint={"relation": "left_of", "target": "A"}
+        )
+    )
+    layout = auto_layout(schematic)
+    assert set(layout.boxes) == {"A", "B"}
