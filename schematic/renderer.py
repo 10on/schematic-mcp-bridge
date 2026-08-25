@@ -61,13 +61,16 @@ def render_svg(schematic: Schematic, layout: SchematicLayout) -> str:
                 name_x, name_anchor = stub_x2 - 4, "end"
                 num_x, num_anchor = box.x + 4, "start"
                 label_x, label_anchor = stub_x2 - 4, "end"
-                label_y_offset = -4
+                label_y_offset = -11
             else:
                 stub_x2 = pin_pos.x + STUB_LENGTH
                 name_x, name_anchor = stub_x2 + 4, "start"
                 num_x, num_anchor = box.x + box.width - 4, "end"
                 label_x, label_anchor = stub_x2 + 4, "start"
-                label_y_offset = -4
+                label_y_offset = -11
+
+            node = f"{component.id}.{pin.number}"
+            is_routed = node in routed_nodes
 
             parts.append(
                 f'<line x1="{pin_pos.x:.0f}" y1="{pin_pos.y:.0f}" '
@@ -77,14 +80,16 @@ def render_svg(schematic: Schematic, layout: SchematicLayout) -> str:
                 f'<text x="{num_x:.0f}" y="{pin_pos.y + 3:.0f}" text-anchor="{num_anchor}" '
                 f'font-size="9" fill="#888">{escape(pin.number)}</text>'
             )
+            # a routed wire runs straight through this space along the pin's
+            # own y — lift the name above the line so the wire doesn't cross it
+            name_y = pin_pos.y + (label_y_offset if is_routed else 3)
             parts.append(
-                f'<text x="{name_x:.0f}" y="{pin_pos.y + 3:.0f}" text-anchor="{name_anchor}" '
+                f'<text x="{name_x:.0f}" y="{name_y:.0f}" text-anchor="{name_anchor}" '
                 f'font-size="11">{escape(pin.name)}</text>'
             )
 
-            node = f"{component.id}.{pin.number}"
             net_name = node_to_net.get(node)
-            if net_name and node not in routed_nodes:
+            if net_name and not is_routed:
                 parts.append(
                     f'<text x="{label_x:.0f}" y="{pin_pos.y + label_y_offset:.0f}" '
                     f'text-anchor="{label_anchor}" font-size="9" fill="#2a6" '

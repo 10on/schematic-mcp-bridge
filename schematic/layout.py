@@ -16,7 +16,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from schematic.model import Component, Pin, Schematic
+from schematic.model import Component, Net, Pin, Schematic
 
 PIN_SPACING = 24
 BOX_PADDING_Y = 20
@@ -105,17 +105,63 @@ def _ordered_components(schematic: Schematic) -> list[Component]:
     return [schematic.components[cid] for cid in ordered_ids]
 
 
+def _preferred_side(
+    pin: Pin, component_id: str, own_index: int, order_index: dict[str, int],
+    node_to_net: dict[str, str], nets: dict[str, Net],
+) -> str | None:
+    """Bias a pin toward whichever side faces its neighbor — but only for a
+    net with exactly two endpoints, since that's the only kind routing.py
+    can ever turn into a real wire. Everything else (buses, 3+ endpoints)
+    is never going to be a drawn wire regardless of which side it's on, so
+    it's left to the plain left/right balancing pass below."""
+    net_name = node_to_net.get(f"{component_id}.{pin.number}")
+    if net_name is None:
+        return None
+    net = nets[net_name]
+    if len(net.nodes) != 2:
+        return None
+    other_node = next((n for n in net.nodes if not n.startswith(f"{component_id}.")), None)
+    if other_node is None:
+        return None
+    other_index = order_index.get(other_node.split(".", 1)[0])
+    if other_index is None or other_index == own_index:
+        return None
+    return "right" if other_index > own_index else "left"
+
+
+def _split_pins(
+    pins: list[Pin], component_id: str, own_index: int, order_index: dict[str, int],
+    node_to_net: dict[str, str], nets: dict[str, Net],
+) -> tuple[list[Pin], list[Pin]]:
+    left, right, undecided = [], [], []
+    for pin in pins:
+        side = _preferred_side(pin, component_id, own_index, order_index, node_to_net, nets)
+        if side == "left":
+            left.append(pin)
+        elif side == "right":
+            right.append(pin)
+        else:
+            undecided.append(pin)
+    for pin in undecided:
+        (left if len(left) <= len(right) else right).append(pin)
+    return left, right
+
+
 def auto_layout(schematic: Schematic) -> SchematicLayout:
     node_to_net = schematic.node_to_net_map()
+    ordered = _ordered_components(schematic)
+    order_index = {c.id: i for i, c in enumerate(ordered)}
     boxes: dict[str, ComponentBox] = {}
     cursor_x = 0.0
     max_bottom = 0.0
     prev_right_reach = 0.0
 
-    for component in _ordered_components(schematic):
+    for component in ordered:
         visible_pins = [p for p in component.pins if not p.hidden]
-        split = (len(visible_pins) + 1) // 2
-        left_pins, right_pins = visible_pins[:split], visible_pins[split:]
+        left_pins, right_pins = _split_pins(
+            visible_pins, component.id, order_index[component.id], order_index,
+            node_to_net, schematic.nets,
+        )
         rows = max(len(left_pins), len(right_pins), 1)
         height = rows * PIN_SPACING + BOX_PADDING_Y * 2
 

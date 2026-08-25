@@ -25,11 +25,25 @@ def test_routes_wire_between_facing_neighbor_pins():
     assert len(wires[0].points) >= 2
 
 
-def test_does_not_route_non_facing_pins():
+def test_routes_regardless_of_which_pin_numbers_are_used():
+    # layout.py biases pin side toward whichever neighbor a 2-endpoint net
+    # points at, so this isn't limited to "pin 2 happens to be on the right"
+    # — R1.1/R2.1 route here even though pin "1" used to default left.
     schematic = Schematic(name="demo")
     schematic.add_component(two_pin("R1"))
     schematic.add_component(two_pin("R2"))
-    schematic.connect("R1.1", "R2.1")  # both on the left side — would cross R1's own box
+    schematic.connect("R1.1", "R2.1")
+
+    layout = auto_layout(schematic)
+    wires = route_wires(schematic, layout)
+    assert len(wires) == 1
+    assert {wires[0].node_a, wires[0].node_b} == {"R1.1", "R2.1"}
+
+
+def test_does_not_route_pins_on_the_same_component():
+    schematic = Schematic(name="demo")
+    schematic.add_component(two_pin("R1"))
+    schematic.connect("R1.1", "R1.2")  # jumper within one component, not a neighbor pair
 
     layout = auto_layout(schematic)
     wires = route_wires(schematic, layout)

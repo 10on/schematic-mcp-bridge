@@ -46,12 +46,35 @@ def test_svg_contains_component_labels_and_values():
     assert "1k" in svg
 
 
-def test_svg_contains_pin_names_and_net_label():
+def test_svg_contains_pin_names():
     schematic = make_schematic()
     svg = render_svg(schematic, auto_layout(schematic))
     assert ">A<" in svg
     assert ">B<" in svg
-    assert ">VCC<" in svg
+
+
+def test_facing_two_endpoint_net_between_neighbors_becomes_a_wire_not_a_label():
+    # U1.A/U2.A face each other (layout.py biases side toward the neighbor
+    # for a 2-endpoint net) so routing.py connects them directly — no label.
+    schematic = make_schematic()
+    svg = render_svg(schematic, auto_layout(schematic))
+    assert ">VCC<" not in svg
+    assert "<polyline" in svg
+
+
+def test_non_adjacent_two_endpoint_net_still_gets_a_label():
+    schematic = Schematic(name="demo")
+    for component_id in ("U1", "U2", "U3"):
+        schematic.add_component(
+            Component(
+                id=component_id,
+                library_id="Device:R",
+                pins=[Pin(number="1", name="A"), Pin(number="2", name="B")],
+            )
+        )
+    schematic.connect_net("SIG", ["U1.A", "U3.A"])  # U2 sits physically between them
+    svg = render_svg(schematic, auto_layout(schematic))
+    assert ">SIG<" in svg
 
 
 def test_svg_has_one_rect_per_component_plus_background():
