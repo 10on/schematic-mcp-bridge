@@ -44,6 +44,15 @@ class ComponentSearchResult:
     ref_prefix: str
 
 
+def _fix_mojibake(text: str) -> str:
+    """SKiDL reads .kicad_sym files as Latin-1, mangling non-ASCII UTF-8
+    text (e.g. '±', 'µ', 'Ω') into two-character garbage. Undo that."""
+    try:
+        return text.encode("latin-1").decode("utf-8")
+    except (UnicodeDecodeError, UnicodeEncodeError):
+        return text
+
+
 def _split_library_id(library_id: str) -> tuple[str, str]:
     if ":" not in library_id:
         raise ValueError(f"invalid library_id '{library_id}', expected 'Library:Symbol'")
@@ -94,8 +103,8 @@ class ComponentLibrary:
                     results.append(
                         ComponentSearchResult(
                             library_id=f"{lib_name}:{part.name}",
-                            description=part.description or "",
-                            keywords=part.keywords or "",
+                            description=_fix_mojibake(part.description or ""),
+                            keywords=_fix_mojibake(part.keywords or ""),
                             ref_prefix=part.ref_prefix,
                         )
                     )
@@ -107,7 +116,7 @@ class ComponentLibrary:
         return [
             Pin(
                 number=str(pin.num),
-                name=pin.name,
+                name=_fix_mojibake(pin.name),
                 electrical_type=PIN_FUNC_TO_ELECTRICAL_TYPE.get(int(pin.func), "unspecified"),
             )
             for pin in part.pins
@@ -130,5 +139,5 @@ class ComponentLibrary:
             value=value if value is not None else (part.value or None),
             label=label,
             pins=self.get_component_pins(library_id),
-            metadata={"description": part.description or ""},
+            metadata={"description": _fix_mojibake(part.description or "")},
         )

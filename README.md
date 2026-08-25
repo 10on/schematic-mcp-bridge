@@ -22,12 +22,23 @@ See `schematic_mcp_requirements.md` for the full spec and `SKILL.md`
   (`schematic/validation.py`: `validate` / `run_erc`). Tested against real
   official KiCad symbol libraries vendored in `tests/fixtures/kicad-symbols/`
   (`Device`, `MCU_Espressif`, `Sensor_Current`).
+- Stage 3 done: naive auto layout (`schematic/layout.py`, one row of
+  boxes, no overlap), an SVG renderer (`schematic/renderer.py`) that
+  draws component boxes with pin numbers/names and net-name labels next
+  to each pin — no drawn wires yet, connectivity is shown via labels
+  (see requirements section 11); and a CLI (`cli/main.py`: `search`,
+  `validate`, `render`).
 
-Next: Stage 3 — CLI and SVG renderer.
+Next: Stage 4 — MCP server exposing this as tools for an agent.
 
 ## Development
 
 ```bash
 python3 -m pip install --user --break-system-packages -e ".[dev]"
 PYTHONPATH=. python3 -m pytest
+
+# CLI
+PYTHONPATH=. python3 -m cli.main search resistor
+PYTHONPATH=. python3 -m cli.main validate examples/esp32_ina226.json
+PYTHONPATH=. python3 -m cli.main render examples/esp32_ina226.json -o out.svg
 ```
