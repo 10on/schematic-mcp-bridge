@@ -10,7 +10,7 @@ AI Agent → MCP / high-level API → semantic schematic model → validation/ER
 ```
 
 See `schematic_mcp_requirements.md` for the full spec and `SKILL.md`
-(once added) for agent rules.
+for agent rules.
 
 ## Status
 
