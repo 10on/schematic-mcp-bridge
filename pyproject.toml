@@ -1,0 +1,19 @@
+[project]
+name = "schematic-mcp"
+version = "0.1.0"
+description = "AI-agent-friendly semantic model for building electrical schematics"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["schematic"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
