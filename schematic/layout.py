@@ -5,20 +5,28 @@ left-to-right, power rails on top, grouping related parts, ELK-based
 placement) are requirements section 10 / stage 5, not this stage. This
 module only has to produce *some* non-overlapping, deterministic
 geometry so the renderer has coordinates to draw.
+
+The horizontal gap between boxes is sized dynamically from the pin/net
+label text each box will draw outward (renderer.py) — a fixed gap
+would overlap text whenever labels are longer than expected.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from schematic.model import Schematic
+from schematic.model import Pin, Schematic
 
 PIN_SPACING = 24
 BOX_PADDING_Y = 20
 BOX_MIN_WIDTH = 140
-COMPONENT_GAP = 80
-CHAR_WIDTH = 7
+BOX_CHAR_WIDTH = 7
+STUB_LENGTH = 16
+PIN_NAME_CHAR_WIDTH = 6.8  # renderer draws pin names at font-size 11
+NET_LABEL_CHAR_WIDTH = 5.8  # renderer draws net labels at font-size 9
+SIDE_MARGIN = 16
 ROW_Y = 60
+BOTTOM_MARGIN = 40
 
 
 @dataclass
@@ -44,10 +52,25 @@ class SchematicLayout:
     height: float = 0
 
 
+def _side_reach(pins: list[Pin], component_id: str, node_to_net: dict[str, str]) -> float:
+    """How far out from the box edge this side's text will extend."""
+    if not pins:
+        return STUB_LENGTH + SIDE_MARGIN
+    widest = 0.0
+    for pin in pins:
+        name_width = len(pin.name) * PIN_NAME_CHAR_WIDTH
+        net_name = node_to_net.get(f"{component_id}.{pin.number}")
+        net_width = len(net_name) * NET_LABEL_CHAR_WIDTH if net_name else 0.0
+        widest = max(widest, name_width, net_width)
+    return STUB_LENGTH + widest + SIDE_MARGIN
+
+
 def auto_layout(schematic: Schematic) -> SchematicLayout:
+    node_to_net = schematic.node_to_net_map()
     boxes: dict[str, ComponentBox] = {}
-    cursor_x = COMPONENT_GAP
+    cursor_x = 0.0
     max_bottom = 0.0
+    prev_right_reach = 0.0
 
     for component in schematic.components.values():
         visible_pins = [p for p in component.pins if not p.hidden]
@@ -57,8 +80,12 @@ def auto_layout(schematic: Schematic) -> SchematicLayout:
         height = rows * PIN_SPACING + BOX_PADDING_Y * 2
 
         longest_label = max((len(p.name) for p in visible_pins), default=0)
-        width = max(BOX_MIN_WIDTH, longest_label * CHAR_WIDTH * 2 + 60)
+        width = max(BOX_MIN_WIDTH, longest_label * BOX_CHAR_WIDTH * 2 + 60)
 
+        left_reach = _side_reach(left_pins, component.id, node_to_net)
+        right_reach = _side_reach(right_pins, component.id, node_to_net)
+
+        cursor_x += prev_right_reach + left_reach
         box = ComponentBox(x=cursor_x, y=ROW_Y, width=width, height=height)
         for i, pin in enumerate(left_pins):
             box.pins[pin.number] = PinPosition(
@@ -72,7 +99,9 @@ def auto_layout(schematic: Schematic) -> SchematicLayout:
             )
 
         boxes[component.id] = box
-        cursor_x += width + COMPONENT_GAP
+        cursor_x += width
+        prev_right_reach = right_reach
         max_bottom = max(max_bottom, box.y + box.height)
 
-    return SchematicLayout(boxes=boxes, width=cursor_x, height=max_bottom + COMPONENT_GAP)
+    total_width = cursor_x + prev_right_reach
+    return SchematicLayout(boxes=boxes, width=total_width, height=max_bottom + BOTTOM_MARGIN)

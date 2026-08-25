@@ -19,16 +19,8 @@ STUB_LENGTH = 16
 FONT_FAMILY = "monospace"
 
 
-def _build_node_to_net(schematic: Schematic) -> dict[str, str]:
-    node_to_net = {}
-    for net in schematic.nets.values():
-        for node in net.nodes:
-            node_to_net[node] = net.name
-    return node_to_net
-
-
 def render_svg(schematic: Schematic, layout: SchematicLayout) -> str:
-    node_to_net = _build_node_to_net(schematic)
+    node_to_net = schematic.node_to_net_map()
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
         f'viewBox="0 0 {layout.width:.0f} {layout.height:.0f}" '

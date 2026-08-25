@@ -249,6 +249,9 @@ class Schematic:
         net.name = new_name
         self.nets[new_name] = net
 
+    def node_to_net_map(self) -> dict[str, str]:
+        return {node: net.name for net in self.nets.values() for node in net.nodes}
+
     # -- serialization ----------------------------------------------------
 
     def to_dict(self) -> dict:
