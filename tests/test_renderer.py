@@ -62,7 +62,7 @@ def test_facing_two_endpoint_net_between_neighbors_becomes_a_wire_not_a_label():
     assert "<polyline" in svg
 
 
-def test_non_adjacent_two_endpoint_net_still_gets_a_label():
+def test_non_adjacent_two_endpoint_net_is_channel_routed_not_labeled():
     schematic = Schematic(name="demo")
     for component_id in ("U1", "U2", "U3"):
         schematic.add_component(
@@ -74,7 +74,24 @@ def test_non_adjacent_two_endpoint_net_still_gets_a_label():
         )
     schematic.connect_net("SIG", ["U1.A", "U3.A"])  # U2 sits physically between them
     svg = render_svg(schematic, auto_layout(schematic))
-    assert ">SIG<" in svg
+    assert ">SIG<" not in svg
+    assert "<polyline" in svg
+
+
+def test_bus_net_with_three_endpoints_still_gets_labels():
+    schematic = Schematic(name="demo")
+    for component_id in ("U1", "U2", "U3"):
+        schematic.add_component(
+            Component(
+                id=component_id,
+                library_id="Device:R",
+                pins=[Pin(number="1", name="A"), Pin(number="2", name="B")],
+            )
+        )
+    schematic.connect_net("BUS", ["U1.A", "U2.A", "U3.A"])
+    svg = render_svg(schematic, auto_layout(schematic))
+    assert svg.count(">BUS<") == 3
+    assert "<polyline" not in svg
 
 
 def test_svg_has_one_rect_per_component_plus_background():

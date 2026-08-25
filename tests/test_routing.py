@@ -50,16 +50,37 @@ def test_does_not_route_pins_on_the_same_component():
     assert wires == []
 
 
-def test_does_not_route_non_adjacent_components():
+def test_routes_non_adjacent_components_via_channel():
     schematic = Schematic(name="demo")
     schematic.add_component(two_pin("R1"))
     schematic.add_component(two_pin("R2"))
     schematic.add_component(two_pin("R3"))
-    schematic.connect("R1.2", "R3.1")  # R2 sits physically between them
+    schematic.connect("R1.2", "R3.1")  # R2 sits physically between them — no direct route
 
     layout = auto_layout(schematic)
     wires = route_wires(schematic, layout)
-    assert wires == []
+
+    assert len(wires) == 1
+    assert {wires[0].node_a, wires[0].node_b} == {"R1.2", "R3.1"}
+    # a channel route must duck below every box, not just cut straight across
+    assert max(y for _, y in wires[0].points) > max(
+        box.y + box.height for box in layout.boxes.values()
+    )
+
+
+def test_channel_routes_use_separate_lanes():
+    schematic = Schematic(name="demo")
+    schematic.add_component(two_pin("R1"))
+    schematic.add_component(two_pin("R2"))
+    schematic.add_component(two_pin("R3"))
+    schematic.connect("R1.2", "R3.1")
+    schematic.connect("R1.1", "R3.2")
+
+    layout = auto_layout(schematic)
+    wires = route_wires(schematic, layout)
+    assert len(wires) == 2
+    lane_ys = {y for wire in wires for _, y in wire.points[1:-1]}
+    assert len(lane_ys) == 2  # each wire got its own horizontal lane
 
 
 def test_does_not_route_nets_with_more_than_two_endpoints():

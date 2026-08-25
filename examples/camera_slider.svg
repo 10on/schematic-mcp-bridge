@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3890 284" width="3890" height="284" font-family="monospace">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 3890 380" width="3890" height="380" font-family="monospace">
 <rect x="0" y="0" width="100%" height="100%" fill="white"/>
 <rect x="66" y="60" width="140" height="64" fill="none" stroke="black" stroke-width="1.5"/>
 <text x="136" y="52" text-anchor="middle" font-size="13" font-weight="bold">BATT</text>
@@ -122,20 +122,16 @@
 <text x="1666" y="177" text-anchor="end" font-size="11">UART_TX</text>
 <line x1="1844" y1="92" x2="1860" y2="92" stroke="black" stroke-width="1"/>
 <text x="1840" y="95" text-anchor="end" font-size="9" fill="#888">9</text>
-<text x="1864" y="95" text-anchor="start" font-size="11">A1</text>
-<text x="1864" y="81" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">MOT_A1</text>
+<text x="1864" y="81" text-anchor="start" font-size="11">A1</text>
 <line x1="1844" y1="116" x2="1860" y2="116" stroke="black" stroke-width="1"/>
 <text x="1840" y="119" text-anchor="end" font-size="9" fill="#888">10</text>
-<text x="1864" y="119" text-anchor="start" font-size="11">A2</text>
-<text x="1864" y="105" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">MOT_A2</text>
+<text x="1864" y="105" text-anchor="start" font-size="11">A2</text>
 <line x1="1844" y1="140" x2="1860" y2="140" stroke="black" stroke-width="1"/>
 <text x="1840" y="143" text-anchor="end" font-size="9" fill="#888">11</text>
-<text x="1864" y="143" text-anchor="start" font-size="11">B1</text>
-<text x="1864" y="129" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">MOT_B1</text>
+<text x="1864" y="129" text-anchor="start" font-size="11">B1</text>
 <line x1="1844" y1="164" x2="1860" y2="164" stroke="black" stroke-width="1"/>
 <text x="1840" y="167" text-anchor="end" font-size="9" fill="#888">12</text>
-<text x="1864" y="167" text-anchor="start" font-size="11">B2</text>
-<text x="1864" y="153" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">MOT_B2</text>
+<text x="1864" y="153" text-anchor="start" font-size="11">B2</text>
 <rect x="1990" y="60" width="200" height="184" fill="none" stroke="black" stroke-width="1.5"/>
 <text x="2090" y="52" text-anchor="middle" font-size="13" font-weight="bold">PCF8574</text>
 <text x="2090" y="258" text-anchor="middle" font-size="11" fill="#555">PCF8574</text>
@@ -165,24 +161,19 @@
 <text x="1970" y="201" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">PCF_LED1</text>
 <line x1="2190" y1="92" x2="2206" y2="92" stroke="black" stroke-width="1"/>
 <text x="2186" y="95" text-anchor="end" font-size="9" fill="#888">7</text>
-<text x="2210" y="95" text-anchor="start" font-size="11">P2/ENC_CLK</text>
-<text x="2210" y="81" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">PCF_ENC_CLK</text>
+<text x="2210" y="81" text-anchor="start" font-size="11">P2/ENC_CLK</text>
 <line x1="2190" y1="116" x2="2206" y2="116" stroke="black" stroke-width="1"/>
 <text x="2186" y="119" text-anchor="end" font-size="9" fill="#888">8</text>
-<text x="2210" y="119" text-anchor="start" font-size="11">P3/ENC_DT</text>
-<text x="2210" y="105" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">PCF_ENC_DT</text>
+<text x="2210" y="105" text-anchor="start" font-size="11">P3/ENC_DT</text>
 <line x1="2190" y1="140" x2="2206" y2="140" stroke="black" stroke-width="1"/>
 <text x="2186" y="143" text-anchor="end" font-size="9" fill="#888">9</text>
-<text x="2210" y="143" text-anchor="start" font-size="11">P4/ENC_SW</text>
-<text x="2210" y="129" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">PCF_ENC_SW</text>
+<text x="2210" y="129" text-anchor="start" font-size="11">P4/ENC_SW</text>
 <line x1="2190" y1="164" x2="2206" y2="164" stroke="black" stroke-width="1"/>
 <text x="2186" y="167" text-anchor="end" font-size="9" fill="#888">10</text>
-<text x="2210" y="167" text-anchor="start" font-size="11">P5/ES1</text>
-<text x="2210" y="153" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">PCF_ES1</text>
+<text x="2210" y="153" text-anchor="start" font-size="11">P5/ES1</text>
 <line x1="2190" y1="188" x2="2206" y2="188" stroke="black" stroke-width="1"/>
 <text x="2186" y="191" text-anchor="end" font-size="9" fill="#888">11</text>
-<text x="2210" y="191" text-anchor="start" font-size="11">P6/ES2</text>
-<text x="2210" y="177" text-anchor="start" font-size="9" fill="#2a6" font-style="italic">PCF_ES2</text>
+<text x="2210" y="177" text-anchor="start" font-size="11">P6/ES2</text>
 <line x1="2190" y1="212" x2="2206" y2="212" stroke="black" stroke-width="1"/>
 <text x="2186" y="215" text-anchor="end" font-size="9" fill="#888">12</text>
 <text x="2210" y="215" text-anchor="start" font-size="11">P7/LED2</text>
@@ -234,16 +225,13 @@
 <text x="2993" y="186" text-anchor="middle" font-size="11" fill="#555">EC11</text>
 <line x1="2923" y1="92" x2="2907" y2="92" stroke="black" stroke-width="1"/>
 <text x="2927" y="95" text-anchor="start" font-size="9" fill="#888">1</text>
-<text x="2903" y="95" text-anchor="end" font-size="11">CLK</text>
-<text x="2903" y="81" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">PCF_ENC_CLK</text>
+<text x="2903" y="81" text-anchor="end" font-size="11">CLK</text>
 <line x1="2923" y1="116" x2="2907" y2="116" stroke="black" stroke-width="1"/>
 <text x="2927" y="119" text-anchor="start" font-size="9" fill="#888">2</text>
-<text x="2903" y="119" text-anchor="end" font-size="11">DT</text>
-<text x="2903" y="105" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">PCF_ENC_DT</text>
+<text x="2903" y="105" text-anchor="end" font-size="11">DT</text>
 <line x1="2923" y1="140" x2="2907" y2="140" stroke="black" stroke-width="1"/>
 <text x="2927" y="143" text-anchor="start" font-size="9" fill="#888">3</text>
-<text x="2903" y="143" text-anchor="end" font-size="11">SW</text>
-<text x="2903" y="129" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">PCF_ENC_SW</text>
+<text x="2903" y="129" text-anchor="end" font-size="11">SW</text>
 <line x1="3063" y1="92" x2="3079" y2="92" stroke="black" stroke-width="1"/>
 <text x="3059" y="95" text-anchor="end" font-size="9" fill="#888">4</text>
 <text x="3083" y="95" text-anchor="start" font-size="11">GND</text>
@@ -261,8 +249,7 @@
 <text x="3168" y="105" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">GND</text>
 <line x1="3188" y1="92" x2="3172" y2="92" stroke="black" stroke-width="1"/>
 <text x="3192" y="95" text-anchor="start" font-size="9" fill="#888">3</text>
-<text x="3168" y="95" text-anchor="end" font-size="11">SIG</text>
-<text x="3168" y="81" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">PCF_ES1</text>
+<text x="3168" y="81" text-anchor="end" font-size="11">SIG</text>
 <rect x="3456" y="60" width="140" height="88" fill="none" stroke="black" stroke-width="1.5"/>
 <text x="3526" y="52" text-anchor="middle" font-size="13" font-weight="bold">ES2</text>
 <text x="3526" y="162" text-anchor="middle" font-size="11" fill="#555">Endstop-2</text>
@@ -276,30 +263,34 @@
 <text x="3436" y="105" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">GND</text>
 <line x1="3456" y1="92" x2="3440" y2="92" stroke="black" stroke-width="1"/>
 <text x="3460" y="95" text-anchor="start" font-size="9" fill="#888">3</text>
-<text x="3436" y="95" text-anchor="end" font-size="11">SIG</text>
-<text x="3436" y="81" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">PCF_ES2</text>
+<text x="3436" y="81" text-anchor="end" font-size="11">SIG</text>
 <rect x="3718" y="60" width="140" height="136" fill="none" stroke="black" stroke-width="1.5"/>
 <text x="3788" y="52" text-anchor="middle" font-size="13" font-weight="bold">MOTOR</text>
 <text x="3788" y="210" text-anchor="middle" font-size="11" fill="#555">Stepper-Motor</text>
 <line x1="3718" y1="92" x2="3702" y2="92" stroke="black" stroke-width="1"/>
 <text x="3722" y="95" text-anchor="start" font-size="9" fill="#888">1</text>
-<text x="3698" y="95" text-anchor="end" font-size="11">A1</text>
-<text x="3698" y="81" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">MOT_A1</text>
+<text x="3698" y="81" text-anchor="end" font-size="11">A1</text>
 <line x1="3718" y1="116" x2="3702" y2="116" stroke="black" stroke-width="1"/>
 <text x="3722" y="119" text-anchor="start" font-size="9" fill="#888">2</text>
-<text x="3698" y="119" text-anchor="end" font-size="11">A2</text>
-<text x="3698" y="105" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">MOT_A2</text>
+<text x="3698" y="105" text-anchor="end" font-size="11">A2</text>
 <line x1="3718" y1="140" x2="3702" y2="140" stroke="black" stroke-width="1"/>
 <text x="3722" y="143" text-anchor="start" font-size="9" fill="#888">3</text>
-<text x="3698" y="143" text-anchor="end" font-size="11">B1</text>
-<text x="3698" y="129" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">MOT_B1</text>
+<text x="3698" y="129" text-anchor="end" font-size="11">B1</text>
 <line x1="3718" y1="164" x2="3702" y2="164" stroke="black" stroke-width="1"/>
 <text x="3722" y="167" text-anchor="start" font-size="9" fill="#888">4</text>
-<text x="3698" y="167" text-anchor="end" font-size="11">B2</text>
-<text x="3698" y="153" text-anchor="end" font-size="9" fill="#2a6" font-style="italic">MOT_B2</text>
+<text x="3698" y="153" text-anchor="end" font-size="11">B2</text>
 <polyline points="1522,92 1670,92" fill="none" stroke="black" stroke-width="1"/>
 <polyline points="1522,116 1596,116 1596,140 1670,140" fill="none" stroke="black" stroke-width="1"/>
 <polyline points="1522,140 1596,140 1596,116 1670,116" fill="none" stroke="black" stroke-width="1"/>
 <polyline points="1522,164 1596,164 1596,188 1670,188" fill="none" stroke="black" stroke-width="1"/>
 <polyline points="1522,188 1596,188 1596,164 1670,164" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="1860,92 1860,264 3702,264 3702,92" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="1860,116 1860,276 3702,276 3702,116" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="1860,140 1860,288 3702,288 3702,140" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="1860,164 1860,300 3702,300 3702,164" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="2206,92 2206,312 2907,312 2907,92" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="2206,116 2206,324 2907,324 2907,116" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="2206,140 2206,336 2907,336 2907,140" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="2206,164 2206,348 3172,348 3172,92" fill="none" stroke="black" stroke-width="1"/>
+<polyline points="2206,188 2206,360 3440,360 3440,92" fill="none" stroke="black" stroke-width="1"/>
 </svg>

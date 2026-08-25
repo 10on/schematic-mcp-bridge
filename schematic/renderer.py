@@ -23,10 +23,15 @@ def render_svg(schematic: Schematic, layout: SchematicLayout) -> str:
     node_to_net = schematic.node_to_net_map()
     wires = route_wires(schematic, layout)
     routed_nodes = {node for wire in wires for node in (wire.node_a, wire.node_b)}
+
+    # channel-routed wires (routing.py) can dip below the box row itself
+    max_wire_y = max((y for wire in wires for _, y in wire.points), default=0.0)
+    canvas_height = max(layout.height, max_wire_y + 20)
+
     parts: list[str] = [
         f'<svg xmlns="http://www.w3.org/2000/svg" '
-        f'viewBox="0 0 {layout.width:.0f} {layout.height:.0f}" '
-        f'width="{layout.width:.0f}" height="{layout.height:.0f}" '
+        f'viewBox="0 0 {layout.width:.0f} {canvas_height:.0f}" '
+        f'width="{layout.width:.0f}" height="{canvas_height:.0f}" '
         f'font-family="{FONT_FAMILY}">',
         '<rect x="0" y="0" width="100%" height="100%" fill="white"/>',
     ]
